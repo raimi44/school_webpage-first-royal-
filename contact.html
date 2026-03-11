@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us — EduReach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/contact.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">📚</div>
+    Edu<span>Reach</span>
+  </a>
+  <ul id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="explore.html">Explore</a></li>
+    <li><a href="cbt.html">CBT Test</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+    <li><a href="cbt.html" class="nav-cta">Start Test →</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">☰</div>
+</nav>
+
+<div class="page-header">
+  <div class="section-tag">💬 Get In Touch</div>
+  <h1>Contact Us</h1>
+  <p>Have a question about the CBT portal, study materials, or need support? We're here to help.</p>
+</div>
+
+<div class="contact-layout">
+
+  <div class="info-card">
+    <h2>Reach Your Teacher</h2>
+    <p>For login issues, technical problems, or any academic support — get in touch with us directly.</p>
+
+    <div class="contact-item">
+      <div class="c-icon" style="background:rgba(0,196,140,0.12)">📧</div>
+      <div><div class="c-label">Email</div><div class="c-value"><a href="mailto:admin@edureach.edu.ng">admin@edureach.edu.ng</a></div></div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon" style="background:rgba(37,211,102,0.12)">💬</div>
+      <div><div class="c-label">WhatsApp</div><div class="c-value"><a href="https://wa.me/2348000000000" target="_blank">+234 800 000 0000</a></div></div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon" style="background:rgba(245,196,0,0.12)">📍</div>
+      <div><div class="c-label">School Address</div><div class="c-value">Senior Secondary School,<br>Kano State, Nigeria</div></div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon" style="background:rgba(100,149,237,0.12)">📞</div>
+      <div><div class="c-label">Phone</div><div class="c-value"><a href="tel:+2348000000000">+234 800 000 0000</a></div></div>
+    </div>
+
+    <hr class="divider"/>
+
+    <div class="office-hours">
+      <h3>🕐 Office Hours</h3>
+      <div class="hour-row"><span class="day">Monday – Friday</span><span class="time">8:00 AM – 4:00 PM</span></div>
+      <div class="hour-row"><span class="day">Saturday</span><span class="time">9:00 AM – 1:00 PM</span></div>
+      <div class="hour-row"><span class="day">Sunday</span><span class="closed">Closed</span></div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div id="formView">
+      <h2>Send a Message</h2>
+      <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="fName" placeholder="e.g. Amina"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="lName" placeholder="e.g. Bello"/></div>
+      </div>
+
+      <div class="form-group">
+        <label>Your Class</label>
+        <select id="fClass">
+          <option value="">— Select class —</option>
+          <option>SS1A</option><option>SS1B</option><option>SS1C</option>
+          <option>SS2A</option><option>SS2B</option><option>SS2C</option>
+          <option>SS3A</option><option>SS3B</option><option>SS3C</option>
+          <option>Parent / Guardian</option>
+          <option>Teacher / Staff</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Subject / Topic</label>
+        <select id="fTopic">
+          <option value="">— What is this about? —</option>
+          <option>CBT Login Problem</option>
+          <option>Forgot Password</option>
+          <option>Study Material Request</option>
+          <option>Technical Issue</option>
+          <option>General Question</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="fMessage" placeholder="Describe your issue or question in detail..." oninput="countChars()"></textarea>
+        <div class="char-count" id="charCount">0 / 500</div>
+      </div>
+
+      <div id="formError" style="color:#ff6b6b;font-size:0.82rem;margin-bottom:14px;display:none;"></div>
+
+      <button class="btn-send" onclick="submitForm()">📨 Send Message</button>
+    </div>
+
+    <div class="success-state" id="successView">
+      <div class="s-icon">✅</div>
+      <h3>Message Sent!</h3>
+      <p>Thank you for reaching out. Your teacher will respond within 24 hours during school days. Check your WhatsApp or email for a reply.</p>
+      <button class="btn-back" onclick="resetForm()">← Send another message</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="faq-section">
+  <div class="section-tag" style="text-align:center">FAQ</div>
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How do I get my CBT login password?<span class="arrow">▼</span></div>
+    <div class="faq-a">Your CBT password is issued by your class teacher. If you haven't received it yet, use the contact form above or ask your teacher directly. The demo password for testing is <strong>student123</strong>.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I access the website from my phone?<span class="arrow">▼</span></div>
+    <div class="faq-a">Yes! EduReach is fully mobile-friendly. You can use any smartphone, tablet, or computer with a web browser. No app download is required.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What happens when I click "Start Test"?<span class="arrow">▼</span></div>
+    <div class="faq-a">After logging in, clicking "Start Test" will redirect you to a Google Form containing the CBT questions. Ensure you have a stable internet connection before starting, as the test must be completed in one sitting.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Are the study materials free?<span class="arrow">▼</span></div>
+    <div class="faq-a">Yes, all study materials on EduReach are completely free for students. Simply visit the "Explore" page and browse resources by subject.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">I forgot my password. What should I do?<span class="arrow">▼</span></div>
+    <div class="faq-a">Use the contact form on this page, select "Forgot Password" as the topic, and your teacher will reset it for you within 24 hours.</div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 EduReach — <a href="index.html">Home</a> · <a href="cbt.html">CBT Test</a> · <a href="explore.html">Explore</a></p>
+</footer>
+
+<script src="js/shared.js"></script>
+<script src="js/contact.js"></script>
+</body>
+</html>

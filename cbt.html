@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CBT Test Portal — EduReach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+
+  <!-- ── SUPABASE (shared config) ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ════════════════════════════════════════════════
+    //  PASTE YOUR SUPABASE CREDENTIALS HERE
+    //  Go to: supabase.com → your project → Settings → API
+    // ════════════════════════════════════════════════
+    const SUPABASE_URL  = 'https://sggalpcspjzfbywwmegy.supabase.co';
+    const SUPABASE_ANON = 'sb_publishable_yLcyMVRADojSkHe49Z5OpQ_oC1ki3hF';
+    window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  </script>
+
+  <style>
+    :root{--green:#00c48c;--navy:#0b1f3a;--navy-mid:#112237;--gold:#f5c400;--white:#f8faf9;--card-bg:#112237;--text-muted:#8da4b8;--red:#ff5c5c;--blue:#6ab4ff;--radius:16px;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 6%;background:rgba(11,31,58,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,196,140,0.12);}
+    .logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:800;color:var(--white);text-decoration:none;}
+    .logo span{color:var(--green);}
+    .logo-icon{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+    nav ul{display:flex;gap:8px;list-style:none;}
+    nav ul a{text-decoration:none;color:var(--text-muted);font-size:0.86rem;font-weight:500;padding:7px 14px;border-radius:30px;transition:all 0.25s;}
+    nav ul a:hover,nav ul a.active{color:var(--white);background:rgba(0,196,140,0.15);}
+    nav ul a.active{color:var(--green);}
+    .hamburger{display:none;cursor:pointer;font-size:1.4rem;color:var(--white);}
+    @media(max-width:800px){nav ul{display:none;}.hamburger{display:block;}}
+
+    .page-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 20px 60px;position:relative;overflow:hidden;}
+    .page-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 30% 30%,rgba(0,196,140,0.07) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 80% 70%,rgba(245,196,0,0.04) 0%,transparent 60%);}
+
+    /* AUTH CARD */
+    .auth-card{background:var(--card-bg);border:1px solid rgba(0,196,140,0.18);border-radius:24px;width:100%;max-width:480px;padding:44px 40px;position:relative;z-index:2;box-shadow:0 30px 80px rgba(0,0,0,0.4);animation:popIn 0.5s ease both;}
+    @keyframes popIn{from{opacity:0;transform:scale(0.94) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .card-icon{width:66px;height:66px;border-radius:20px;background:rgba(0,196,140,0.12);border:1.5px solid rgba(0,196,140,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;}
+    .card-title{font-family:'DM Serif Display',serif;font-size:1.75rem;text-align:center;margin-bottom:6px;}
+    .card-sub{text-align:center;color:var(--text-muted);font-size:0.84rem;line-height:1.6;margin-bottom:28px;}
+    .tab-bar{display:flex;background:rgba(255,255,255,0.05);border-radius:50px;padding:4px;margin-bottom:28px;}
+    .tab-btn{flex:1;text-align:center;padding:10px;border-radius:40px;font-family:'Sora',sans-serif;font-size:0.84rem;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all 0.25s;}
+    .tab-btn.active{background:var(--green);color:var(--navy);}
+
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;}
+    .form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'Sora',sans-serif;font-size:0.9rem;padding:12px 16px;outline:none;transition:border-color 0.2s,background 0.2s;}
+    .form-group input:focus,.form-group select:focus{border-color:var(--green);background:rgba(0,196,140,0.05);}
+    .form-group select option{background:var(--navy);}
+    .input-wrap{position:relative;}
+    .input-wrap input{padding-right:44px;}
+    .eye-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;}
+    .pw-strength{margin-top:6px;height:4px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;}
+    .pw-bar{height:100%;width:0%;border-radius:4px;transition:width 0.3s,background 0.3s;}
+    .pw-label{font-size:0.7rem;margin-top:4px;}
+    .id-preview{background:rgba(0,196,140,0.08);border:1px dashed rgba(0,196,140,0.3);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--green);font-weight:600;margin-bottom:16px;display:none;line-height:1.7;}
+    .id-preview .note{color:var(--text-muted);font-size:0.74rem;font-weight:400;display:block;margin-top:4px;}
+    .alert{border-radius:10px;padding:11px 14px;font-size:0.82rem;margin-bottom:14px;display:none;line-height:1.6;white-space:pre-line;}
+    .alert-error{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.3);color:var(--red);}
+    .alert-success{background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.3);color:var(--green);}
+    .btn-main{width:100%;background:var(--green);color:var(--navy);border:none;border-radius:50px;font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:700;padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;margin-top:6px;}
+    .btn-main:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,196,140,0.3);}
+    .btn-main:disabled{opacity:0.6;cursor:not-allowed;}
+    .link-btn{background:none;border:none;color:var(--green);font-family:'Sora',sans-serif;font-size:0.83rem;font-weight:600;cursor:pointer;padding:0;}
+    .link-btn:hover{text-decoration:underline;}
+    .form-footer{text-align:center;color:var(--text-muted);font-size:0.8rem;margin-top:18px;}
+
+    /* SPINNER */
+    .spinner{width:18px;height:18px;border:2px solid rgba(11,31,58,0.3);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* PORTAL */
+    .portal-view{display:none;width:100%;max-width:960px;position:relative;z-index:2;animation:popIn 0.5s ease both;}
+    .portal-top{background:var(--card-bg);border:1px solid rgba(0,196,140,0.18);border-radius:20px;padding:28px 34px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .portal-top h2{font-family:'DM Serif Display',serif;font-size:1.4rem;}
+    .portal-top p{color:var(--text-muted);font-size:0.82rem;margin-top:3px;}
+    .user-badge{display:flex;align-items:center;gap:12px;background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.2);border-radius:30px;padding:10px 18px;}
+    .avatar{width:36px;height:36px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;color:var(--navy);flex-shrink:0;}
+    .uinfo .uname{font-size:0.88rem;font-weight:700;}
+    .uinfo .uid{font-size:0.72rem;color:var(--green);font-weight:600;}
+    .uinfo .uclass{font-size:0.72rem;color:var(--text-muted);}
+    .btn-logout{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.25);color:var(--red);border-radius:20px;padding:8px 18px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:background 0.2s;}
+    .btn-logout:hover{background:rgba(255,92,92,0.2);}
+    .class-banner{border-radius:14px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;font-size:0.88rem;font-weight:600;}
+    .class-banner.ss1{background:rgba(106,180,255,0.1);border:1px solid rgba(106,180,255,0.25);color:var(--blue);}
+    .class-banner.ss2{background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.25);color:var(--green);}
+    .class-banner.ss3{background:rgba(245,196,0,0.1);border:1px solid rgba(245,196,0,0.25);color:var(--gold);}
+    .class-banner .cb-icon{font-size:1.6rem;}
+    .class-banner .cb-note{font-size:0.73rem;font-weight:400;opacity:0.8;display:block;margin-top:2px;}
+    .notice{background:rgba(245,196,0,0.07);border:1px solid rgba(245,196,0,0.2);border-radius:12px;padding:13px 18px;font-size:0.82rem;color:#f5c400cc;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+    .tests-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+    .test-card{background:var(--card-bg);border:1px solid rgba(0,196,140,0.1);border-radius:var(--radius);padding:26px;transition:transform 0.3s,border-color 0.3s;}
+    .test-card:hover{transform:translateY(-4px);border-color:rgba(0,196,140,0.3);}
+    .test-card.unavailable{opacity:0.5;}
+    .test-card.unavailable:hover{transform:none;}
+    .t-icon{font-size:1.9rem;margin-bottom:12px;}
+    .t-sub{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:5px;}
+    .test-card h3{font-size:0.95rem;font-weight:700;margin-bottom:7px;}
+    .test-card p{font-size:0.8rem;color:var(--text-muted);line-height:1.5;margin-bottom:15px;}
+    .test-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px;}
+    .meta-tag{background:rgba(255,255,255,0.06);border-radius:20px;padding:3px 11px;font-size:0.7rem;color:var(--text-muted);}
+    .btn-test{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--green);color:var(--navy);border:none;border-radius:50px;font-family:'Sora',sans-serif;font-size:0.86rem;font-weight:700;padding:11px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;}
+    .btn-test:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,196,140,0.3);}
+    .btn-test-disabled{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:rgba(255,255,255,0.05);color:var(--text-muted);border:none;border-radius:50px;font-family:'Sora',sans-serif;font-size:0.86rem;font-weight:600;padding:11px;cursor:not-allowed;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-icon">📚</div>Edu<span>Reach</span></a>
+  <ul id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="explore.html">Explore</a></li>
+    <li><a href="cbt.html" class="active">CBT Test</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">☰</div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="page-bg"></div>
+
+  <!-- AUTH CARD -->
+  <div class="auth-card" id="authCard">
+    <div class="card-icon" id="cardIcon">🔐</div>
+    <h2 class="card-title" id="cardTitle">Student Portal</h2>
+    <p class="card-sub"   id="cardSub">Login or register to access your CBT tests.</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">🔑 Login</button>
+      <button class="tab-btn"        id="tabReg"   onclick="switchTab('register')">✏️ Register</button>
+    </div>
+
+    <div class="alert alert-error"   id="alertErr"></div>
+    <div class="alert alert-success" id="alertOk"></div>
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Student ID</label>
+        <input type="text" id="loginId" placeholder="e.g. EDU/SS2A/AB001"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="loginPw" placeholder="Your password"/>
+          <button class="eye-btn" onclick="toggleEye('loginPw','eye1')" id="eye1">👁</button>
+        </div>
+      </div>
+      <button class="btn-main" id="loginBtn" onclick="doLogin()">
+        <span id="loginBtnText">🚀 Login to Portal</span>
+        <div class="spinner" id="loginSpinner"></div>
+      </button>
+      <div class="form-footer">No account? <button class="link-btn" onclick="switchTab('register')">Register here →</button></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" style="display:none;">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" placeholder="e.g. Amina Bello" oninput="previewId()"/>
+      </div>
+      <div class="form-group">
+        <label>Class</label>
+        <select id="regClass" onchange="previewId()">
+          <option value="">— Select your class —</option>
+          <option>SS1A</option><option>SS1B</option><option>SS1C</option>
+          <option>SS2A</option><option>SS2B</option><option>SS2C</option>
+          <option>SS3A</option><option>SS3B</option><option>SS3C</option>
+        </select>
+      </div>
+      <div class="id-preview" id="idPreview">
+        🪪 Your Student ID will be: <strong id="idSpan">—</strong>
+        <span class="note">📌 Write this down — you'll need it to login from any device.</span>
+      </div>
+      <div class="form-group">
+        <label>Choose Password</label>
+        <div class="input-wrap">
+          <input type="password" id="regPw" placeholder="Min. 6 characters" oninput="checkStrength()"/>
+          <button class="eye-btn" onclick="toggleEye('regPw','eye2')" id="eye2">👁</button>
+        </div>
+        <div class="pw-strength"><div class="pw-bar" id="pwBar"></div></div>
+        <div class="pw-label" id="pwLabel"></div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="input-wrap">
+          <input type="password" id="regPw2" placeholder="Re-enter password"/>
+          <button class="eye-btn" onclick="toggleEye('regPw2','eye3')" id="eye3">👁</button>
+        </div>
+      </div>
+      <button class="btn-main" id="regBtn" onclick="doRegister()">
+        <span id="regBtnText">✅ Create My Account</span>
+        <div class="spinner" id="regSpinner"></div>
+      </button>
+      <div class="form-footer">Already registered? <button class="link-btn" onclick="switchTab('login')">Login here →</button></div>
+    </div>
+  </div>
+
+  <!-- PORTAL -->
+  <div class="portal-view" id="portalView">
+    <div class="portal-top">
+      <div>
+        <h2>📝 CBT Test Portal</h2>
+        <p>Tests below are personalised for your class only.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="user-badge">
+          <div class="avatar"  id="pAvatar">A</div>
+          <div class="uinfo">
+            <div class="uname"  id="pName">—</div>
+            <div class="uid"    id="pId">—</div>
+            <div class="uclass" id="pClass">—</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="class-banner" id="classBanner">
+      <span class="cb-icon">🎓</span>
+      <div>
+        <span id="classBannerText">Loading…</span>
+        <span class="cb-note">These tests are exclusive to your class level. Other classes see different questions.</span>
+      </div>
+    </div>
+
+    <div class="notice">⚠️ Ensure a stable internet connection. Complete the test in one sitting.</div>
+    <div class="tests-grid" id="testsGrid"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  GOOGLE FORM LINKS PER CLASS LEVEL
+//  Replace placeholder URLs with your real Google Form links.
+//  SS1A, SS1B, SS1C → all use SS1 forms
+//  SS2A, SS2B, SS2C → all use SS2 forms
+//  SS3A, SS3B, SS3C → all use SS3 forms
+// ══════════════════════════════════════════════════════════════
+const FORMS = {
+  SS1: {
+    mathematics: 'https://docs.google.com/forms/d/YOUR_SS1_MATHS/viewform',
+    english:     'https://docs.google.com/forms/d/YOUR_SS1_ENGLISH/viewform',
+    physics:     'https://docs.google.com/forms/d/YOUR_SS1_PHYSICS/viewform',
+    chemistry:   'https://docs.google.com/forms/d/YOUR_SS1_CHEMISTRY/viewform',
+    biology:     'https://docs.google.com/forms/d/YOUR_SS1_BIOLOGY/viewform',
+    economics:   'https://docs.google.com/forms/d/YOUR_SS1_ECONOMICS/viewform',
+  },
+  SS2: {
+    mathematics: 'https://docs.google.com/forms/d/YOUR_SS2_MATHS/viewform',
+    english:     'https://docs.google.com/forms/d/YOUR_SS2_ENGLISH/viewform',
+    physics:     'https://docs.google.com/forms/d/YOUR_SS2_PHYSICS/viewform',
+    chemistry:   'https://docs.google.com/forms/d/YOUR_SS2_CHEMISTRY/viewform',
+    biology:     'https://docs.google.com/forms/d/YOUR_SS2_BIOLOGY/viewform',
+    economics:   'https://docs.google.com/forms/d/YOUR_SS2_ECONOMICS/viewform',
+  },
+  SS3: {
+    mathematics: 'https://docs.google.com/forms/d/YOUR_SS3_MATHS/viewform',
+    english:     'https://docs.google.com/forms/d/YOUR_SS3_ENGLISH/viewform',
+    physics:     'https://docs.google.com/forms/d/YOUR_SS3_PHYSICS/viewform',
+    chemistry:   'https://docs.google.com/forms/d/YOUR_SS3_CHEMISTRY/viewform',
+    biology:     'https://docs.google.com/forms/d/YOUR_SS3_BIOLOGY/viewform',
+    economics:   'https://docs.google.com/forms/d/YOUR_SS3_ECONOMICS/viewform',
+  }
+};
+
+const SUBJECTS = [
+  {key:'mathematics',icon:'➕',label:'Mathematics',    desc:'Number & Numeration, Algebra, Geometry, Statistics.',mins:45},
+  {key:'english',    icon:'📜',label:'English Language',desc:'Comprehension, Summary, Grammar, Oral English.',      mins:45},
+  {key:'physics',    icon:'🔬',label:'Physics',         desc:'Mechanics, Waves, Electricity, Modern Physics.',       mins:45},
+  {key:'chemistry',  icon:'⚗️',label:'Chemistry',       desc:'Atomic Structure, Bonding, Organic & Inorganic.',      mins:45},
+  {key:'biology',    icon:'🌿',label:'Biology',          desc:'Cell Biology, Ecology, Genetics, Physiology.',         mins:45},
+  {key:'economics',  icon:'📊',label:'Economics',        desc:'Micro & Macro Economics, Trade, Public Finance.',      mins:40},
+];
+
+// ── helpers ──
+function getLevel(cls){ return cls ? cls.slice(0,3).toUpperCase() : ''; }
+function setLoading(btnId, spinnerId, textId, loading, label){
+  const btn=document.getElementById(btnId);
+  const sp=document.getElementById(spinnerId);
+  const tx=document.getElementById(textId);
+  btn.disabled=loading;
+  sp.style.display=loading?'block':'none';
+  tx.textContent=loading?'Please wait…':label;
+}
+
+// ── ID preview (no DB call yet) ──
+async function previewId(){
+  const name=document.getElementById('regName').value.trim();
+  const cls =document.getElementById('regClass').value;
+  const prev=document.getElementById('idPreview');
+  if(!name||!cls){prev.style.display='none';return;}
+  // Count existing students in this class to generate sequential number
+  const {count}=await window.sb.from('students').select('*',{count:'exact',head:true}).eq('class',cls);
+  const num=String((count||0)+1).padStart(3,'0');
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const id=`EDU/${cls}/${initials}${num}`;
+  document.getElementById('idSpan').textContent=id;
+  prev.style.display='block';
+  prev.dataset.id=id;
+}
+
+// ── password strength ──
+function checkStrength(){
+  const pw=document.getElementById('regPw').value;
+  const bar=document.getElementById('pwBar');
+  const lbl=document.getElementById('pwLabel');
+  let s=0;
+  if(pw.length>=6)s++;if(pw.length>=10)s++;
+  if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  const lvl=[{w:'0%',c:'transparent',t:''},{w:'25%',c:'#ff5c5c',t:'Weak'},{w:'50%',c:'#f5c400',t:'Fair'},{w:'75%',c:'#00b4d8',t:'Good'},{w:'100%',c:'var(--green)',t:'Strong 💪'}][Math.min(s,4)];
+  bar.style.width=lvl.w;bar.style.background=lvl.c;lbl.textContent=lvl.t;lbl.style.color=lvl.c;
+}
+
+// ── REGISTER ──
+async function doRegister(){
+  clearAlerts();
+  const name=document.getElementById('regName').value.trim();
+  const cls =document.getElementById('regClass').value;
+  const pw  =document.getElementById('regPw').value;
+  const pw2 =document.getElementById('regPw2').value;
+  const prev=document.getElementById('idPreview');
+
+  if(!name) return showErr('Please enter your full name.');
+  if(!cls)  return showErr('Please select your class.');
+  if(pw.length<6) return showErr('Password must be at least 6 characters.');
+  if(pw!==pw2)    return showErr('Passwords do not match.');
+  const id=prev.dataset.id;
+  if(!id)   return showErr('Please fill in your name and class first.');
+
+  setLoading('regBtn','regSpinner','regBtnText',true);
+
+  // Check if ID already exists
+  const {data:existing}=await window.sb.from('students').select('id').eq('student_id',id).single();
+  if(existing){
+    setLoading('regBtn','regSpinner','regBtnText',false,'✅ Create My Account');
+    return showErr('This Student ID already exists. Please login instead.');
+  }
+
+  // Insert new student
+  const {error}=await window.sb.from('students').insert({
+    student_id: id,
+    full_name:  name,
+    class:      cls,
+    password:   pw,
+    created_at: new Date().toISOString()
+  });
+
+  setLoading('regBtn','regSpinner','regBtnText',false,'✅ Create My Account');
+
+  if(error){
+    return showErr('Registration failed: '+error.message);
+  }
+
+  showOk(`✅ Account created successfully!\n🪪 Your Student ID: ${id}\n📌 Save this — you need it to login from any device.`);
+  setTimeout(()=>{switchTab('login');document.getElementById('loginId').value=id;clearAlerts();},4000);
+}
+
+// ── LOGIN ──
+async function doLogin(){
+  clearAlerts();
+  const id=document.getElementById('loginId').value.trim();
+  const pw=document.getElementById('loginPw').value;
+
+  if(!id) return showErr('Please enter your Student ID.');
+  if(!pw) return showErr('Please enter your password.');
+
+  setLoading('loginBtn','loginSpinner','loginBtnText',true);
+
+  const {data:student,error}=await window.sb
+    .from('students')
+    .select('*')
+    .eq('student_id',id)
+    .single();
+
+  setLoading('loginBtn','loginSpinner','loginBtnText',false,'🚀 Login to Portal');
+
+  if(error||!student) return showErr('Student ID not found. Please register first.');
+  if(student.password!==pw) return showErr('Incorrect password. Please try again.');
+
+  // Save session
+  sessionStorage.setItem('edureach_session', JSON.stringify({
+    id:    student.student_id,
+    name:  student.full_name,
+    cls:   student.class
+  }));
+
+  showPortal({id:student.student_id, name:student.full_name, cls:student.class});
+}
+
+// ── PORTAL ──
+function showPortal(s){
+  document.getElementById('authCard').style.display='none';
+  document.getElementById('portalView').style.display='block';
+  const init=s.name.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('pAvatar').textContent=init;
+  document.getElementById('pName').textContent=s.name;
+  document.getElementById('pId').textContent=s.id;
+  document.getElementById('pClass').textContent=s.cls;
+  buildTests(s.cls);
+}
+
+function buildTests(cls){
+  const level=getLevel(cls);
+  const forms=FORMS[level]||{};
+  const banner=document.getElementById('classBanner');
+  banner.className='class-banner '+level.toLowerCase();
+  document.getElementById('classBannerText').textContent=`You are in ${cls} — your tests are set for ${level} students only.`;
+  document.getElementById('testsGrid').innerHTML=SUBJECTS.map(s=>{
+    const url=forms[s.key];
+    const ok=url&&!url.includes('YOUR_');
+    return `<div class="test-card${ok?'':' unavailable'}">
+      <div class="t-icon">${s.icon}</div>
+      <div class="t-sub">${s.label}</div>
+      <h3>${s.label} — ${level}</h3>
+      <p>${s.desc}</p>
+      <div class="test-meta">
+        <span class="meta-tag">⏱ ${s.mins} mins</span>
+        <span class="meta-tag">50 Qs</span>
+        <span class="meta-tag" style="${ok?'color:var(--green);border:1px solid rgba(0,196,140,0.3)':''}">
+          ${ok?'✅ '+level+' Form':'⚙️ Not set'}
+        </span>
+      </div>
+      ${ok
+        ?`<a href="${url}" target="_blank" class="btn-test">▶ Start ${level} Test</a>`
+        :`<button class="btn-test-disabled" disabled>🔗 Link coming soon</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+// ── LOGOUT ──
+function doLogout(){
+  sessionStorage.removeItem('edureach_session');
+  document.getElementById('portalView').style.display='none';
+  document.getElementById('authCard').style.display='block';
+  document.getElementById('loginPw').value='';
+  switchTab('login');
+}
+
+// ── TAB ──
+function switchTab(tab){
+  clearAlerts();
+  const isL=tab==='login';
+  document.getElementById('loginForm').style.display=isL?'block':'none';
+  document.getElementById('registerForm').style.display=isL?'none':'block';
+  document.getElementById('tabLogin').classList.toggle('active',isL);
+  document.getElementById('tabReg').classList.toggle('active',!isL);
+  document.getElementById('cardIcon').textContent=isL?'🔐':'✏️';
+  document.getElementById('cardTitle').textContent=isL?'Student Login':'Create Account';
+  document.getElementById('cardSub').textContent=isL?'Enter your Student ID and password.':'Register once — login from any device.';
+}
+
+// ── ALERTS ──
+function showErr(m){const e=document.getElementById('alertErr');e.textContent='⚠️ '+m;e.style.display='block';}
+function showOk(m){const e=document.getElementById('alertOk');e.textContent=m;e.style.display='block';}
+function clearAlerts(){document.getElementById('alertErr').style.display='none';document.getElementById('alertOk').style.display='none';}
+
+// ── EYE ──
+function toggleEye(id,btn){const i=document.getElementById(id),b=document.getElementById(btn);if(i.type==='password'){i.type='text';b.textContent='🙈';}else{i.type='password';b.textContent='👁';}}
+
+// ── NAV ──
+function toggleNav(){const ul=document.getElementById('navLinks');const v=ul.style.display==='flex';ul.style.display=v?'none':'flex';Object.assign(ul.style,{flexDirection:'column',position:'absolute',top:'68px',right:'6%',background:'#0b1f3a',border:'1px solid rgba(0,196,140,0.2)',borderRadius:'12px',padding:'12px',gap:'6px'});}
+
+// ── ENTER ──
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const isL=document.getElementById('loginForm').style.display!=='none';if(isL)doLogin();else doRegister();});
+
+// ── RESTORE SESSION ──
+window.addEventListener('load',()=>{
+  const s=sessionStorage.getItem('edureach_session');
+  if(s) showPortal(JSON.parse(s));
+});
+</script>
+</body>
+</html>

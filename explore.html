@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore Materials — EduReach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/explore.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">📚</div>
+    Edu<span>Reach</span>
+  </a>
+  <ul id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="explore.html" class="active">Explore</a></li>
+    <li><a href="cbt.html">CBT Test</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="cbt.html" class="nav-cta">Start Test →</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">☰</div>
+</nav>
+
+<div class="page-header">
+  <div class="section-tag">📖 Study Resources</div>
+  <h1>Explore Educational<br>Materials</h1>
+  <p>Handpicked study notes, video lessons, past questions, and practice quizzes — all aligned with WAEC, NECO & JAMB.</p>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search subjects, topics..." oninput="filterMaterials()"/>
+  </div>
+  <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+  <button class="filter-btn" onclick="setFilter('video', this)">🎥 Videos</button>
+  <button class="filter-btn" onclick="setFilter('notes', this)">📝 Notes</button>
+  <button class="filter-btn" onclick="setFilter('pdf', this)">📄 PDF</button>
+  <button class="filter-btn" onclick="setFilter('past', this)">🗂 Past Q</button>
+</div>
+
+<div class="tip-banner">
+  <div class="tip-icon">💡</div>
+  <div>
+    <h3>Study Tip</h3>
+    <p>Before taking the CBT test, go through the study notes and watch at least one video per topic. Attempting past questions is the most effective way to prepare. Good luck! 🎯</p>
+  </div>
+</div>
+
+<div class="materials-section" id="materialsSection">
+
+  <div class="subject-block" data-subject="mathematics">
+    <div class="s-heading"><span class="s-icon-big">➕</span><h2>Mathematics</h2><span class="s-count">6 resources</span></div>
+    <div class="materials-row">
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Quadratic Equations — Complete Guide</h3><p>Master factorisation, completing the square, and quadratic formula with step-by-step examples.</p><a href="https://www.youtube.com/results?search_query=quadratic+equations+SS+Nigeria" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Trigonometry — Ratios & Identities</h3><p>Summary notes covering SOHCAHTOA, sine/cosine rule, and common identities for SS2 & SS3.</p><a href="https://www.google.com/search?q=trigonometry+notes+SS+WAEC" target="_blank">Read Notes →</a></div>
+      <div class="material-card" data-type="past"><span class="m-type type-past">🗂 Past Q</span><h3>WAEC Mathematics Past Questions</h3><p>Compiled WAEC Mathematics OBJ and Theory questions from the past 10 years.</p><a href="https://www.google.com/search?q=WAEC+Mathematics+past+questions+PDF" target="_blank">Download →</a></div>
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Statistics & Probability</h3><p>Mean, median, mode, standard deviation, and probability — with worked examples.</p><a href="https://www.youtube.com/results?search_query=statistics+probability+WAEC+maths" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="pdf"><span class="m-type type-pdf">📄 PDF</span><h3>Algebra Formula Sheet</h3><p>All key algebra identities and formulas in one quick-reference sheet for exams.</p><a href="https://www.google.com/search?q=algebra+formula+sheet+PDF+SS" target="_blank">Download PDF →</a></div>
+      <div class="material-card" data-type="quiz"><span class="m-type type-quiz">✅ Quiz</span><h3>Sequences & Series Practice</h3><p>AP, GP, and sum to infinity — short drill quiz aligned to WAEC format.</p><a href="cbt.html">Take Quiz →</a></div>
+    </div>
+  </div>
+
+  <div class="subject-block" data-subject="english">
+    <div class="s-heading"><span class="s-icon-big">📜</span><h2>English Language</h2><span class="s-count">5 resources</span></div>
+    <div class="materials-row">
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Summary Writing Techniques</h3><p>How to write concise, accurate summaries — the WAEC way. Scoring tips included.</p><a href="https://www.youtube.com/results?search_query=English+summary+writing+WAEC" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Grammar: Tenses & Concord</h3><p>Comprehensive notes on subject-verb agreement, tenses, and common grammatical errors.</p><a href="https://www.google.com/search?q=English+grammar+tenses+concord+SS+notes" target="_blank">Read Notes →</a></div>
+      <div class="material-card" data-type="past"><span class="m-type type-past">🗂 Past Q</span><h3>WAEC English Past Questions</h3><p>Full OBJ sets from WAEC English Language — with answers and explanations.</p><a href="https://www.google.com/search?q=WAEC+English+Language+past+questions+PDF" target="_blank">Download →</a></div>
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Oral English — Vowels & Consonants</h3><p>Phonetics guide: sounds, stress, intonation, and commonly tested words in WAEC.</p><a href="https://www.google.com/search?q=oral+English+phonetics+WAEC+notes" target="_blank">Read Notes →</a></div>
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Comprehension Passage Strategy</h3><p>Step-by-step approach to answering comprehension questions accurately and quickly.</p><a href="https://www.youtube.com/results?search_query=English+comprehension+WAEC+strategy" target="_blank">Watch Lesson →</a></div>
+    </div>
+  </div>
+
+  <div class="subject-block" data-subject="science physics chemistry biology">
+    <div class="s-heading"><span class="s-icon-big">🔬</span><h2>Sciences (Physics · Chemistry · Biology)</h2><span class="s-count">6 resources</span></div>
+    <div class="materials-row">
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Physics: Mechanics & Motion</h3><p>Newton's laws, projectile motion, and energy — clearly explained with animations.</p><a href="https://www.youtube.com/results?search_query=Physics+mechanics+motion+WAEC+Nigeria" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Chemistry: Organic Chemistry Notes</h3><p>Homologous series, functional groups, reactions, and IUPAC naming for SS3.</p><a href="https://www.google.com/search?q=organic+chemistry+SS3+WAEC+notes" target="_blank">Read Notes →</a></div>
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Biology: Photosynthesis & Respiration</h3><p>Detailed video lessons on plant processes, with diagrams and exam tips.</p><a href="https://www.youtube.com/results?search_query=Biology+photosynthesis+respiration+WAEC" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="past"><span class="m-type type-past">🗂 Past Q</span><h3>Physics WAEC Past Questions</h3><p>Compiled Physics OBJ and practical theory questions from recent WAEC exams.</p><a href="https://www.google.com/search?q=WAEC+Physics+past+questions+PDF" target="_blank">Download →</a></div>
+      <div class="material-card" data-type="pdf"><span class="m-type type-pdf">📄 PDF</span><h3>Chemistry Periodic Table Guide</h3><p>Easy-reference periodic table with element properties, groups, and trends explained.</p><a href="https://www.google.com/search?q=periodic+table+SS+chemistry+PDF" target="_blank">Download PDF →</a></div>
+      <div class="material-card" data-type="past"><span class="m-type type-past">🗂 Past Q</span><h3>Biology WAEC Past Questions</h3><p>Biology OBJ questions with detailed answer explanations — 2014 to 2023.</p><a href="https://www.google.com/search?q=WAEC+Biology+past+questions+PDF" target="_blank">Download →</a></div>
+    </div>
+  </div>
+
+  <div class="subject-block" data-subject="economics government geography social science">
+    <div class="s-heading"><span class="s-icon-big">🌍</span><h2>Social Sciences (Economics · Government · Geography)</h2><span class="s-count">4 resources</span></div>
+    <div class="materials-row">
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Economics: Demand & Supply</h3><p>Laws of demand and supply, elasticity, market equilibrium — with graphs and examples.</p><a href="https://www.google.com/search?q=Economics+demand+supply+SS+notes+WAEC" target="_blank">Read Notes →</a></div>
+      <div class="material-card" data-type="video"><span class="m-type type-video">🎥 Video</span><h3>Government: Nigerian Constitution</h3><p>Overview of the 1999 Constitution, branches of government, and citizen rights.</p><a href="https://www.youtube.com/results?search_query=Nigerian+constitution+government+SS" target="_blank">Watch Lesson →</a></div>
+      <div class="material-card" data-type="past"><span class="m-type type-past">🗂 Past Q</span><h3>Economics WAEC Past Questions</h3><p>OBJ and essay past questions for Economics — with model answers.</p><a href="https://www.google.com/search?q=WAEC+Economics+past+questions+PDF" target="_blank">Download →</a></div>
+      <div class="material-card" data-type="notes"><span class="m-type type-notes">📝 Notes</span><h3>Geography: Map Reading & Scale</h3><p>Contour lines, map types, scale calculations — essential for practical geography exams.</p><a href="https://www.google.com/search?q=Geography+map+reading+SS+WAEC+notes" target="_blank">Read Notes →</a></div>
+    </div>
+  </div>
+
+  <div class="no-results" id="noResults">
+    <div class="nr-icon">🔍</div>
+    <p>No materials found. Try a different search term or filter.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 EduReach — <a href="index.html">Home</a> · <a href="cbt.html">CBT Test</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+<script src="js/shared.js"></script>
+<script src="js/explore.js"></script>
+</body>
+</html>

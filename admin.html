@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — EduReach</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ════════════════════════════════════════════════
+    //  SAME CREDENTIALS AS cbt.html
+    // ════════════════════════════════════════════════
+    const SUPABASE_URL  = 'https://sggalpcspjzfbywwmegy.supabase.co';
+    const SUPABASE_ANON = 'sb_publishable_yLcyMVRADojSkHe49Z5OpQ_oC1ki3hF';
+    window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  </script>
+  <style>
+    :root{--green:#00c48c;--navy:#0b1f3a;--card:#112237;--gold:#f5c400;--white:#f8faf9;--muted:#8da4b8;--red:#ff5c5c;--blue:#6ab4ff;--radius:14px;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+    /* ── LOGIN ── */
+    .admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(ellipse 50% 50% at 50% 30%,rgba(245,196,0,0.06) 0%,transparent 70%);}
+    .login-box{background:var(--card);border:1px solid rgba(245,196,0,0.2);border-radius:24px;width:100%;max-width:420px;padding:48px 40px;box-shadow:0 30px 80px rgba(0,0,0,0.4);animation:popIn 0.5s ease both;}
+    @keyframes popIn{from{opacity:0;transform:scale(0.94) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .admin-icon{width:70px;height:70px;background:rgba(245,196,0,0.12);border:1.5px solid rgba(245,196,0,0.3);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 22px;}
+    .login-box h2{font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;margin-bottom:6px;}
+    .login-box p{text-align:center;color:var(--muted);font-size:0.84rem;margin-bottom:28px;}
+    .fg{margin-bottom:16px;}
+    .fg label{display:block;font-size:0.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;}
+    .fg input{width:100%;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'Sora',sans-serif;font-size:0.9rem;padding:12px 16px;outline:none;transition:border-color 0.2s;}
+    .fg input:focus{border-color:var(--gold);}
+    .err{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.3);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--red);margin-bottom:14px;display:none;}
+    .btn-al{width:100%;background:var(--gold);color:var(--navy);border:none;border-radius:50px;font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:700;padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;}
+    .btn-al:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,196,0,0.25);}
+    .btn-al:disabled{opacity:0.6;cursor:not-allowed;}
+    .spinner{width:16px;height:16px;border:2px solid rgba(11,31,58,0.3);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .back-link{display:block;text-align:center;margin-top:18px;color:var(--muted);font-size:0.8rem;text-decoration:none;}
+    .back-link:hover{color:var(--green);}
+
+    /* ── DASHBOARD ── */
+    .dashboard{display:none;min-height:100vh;}
+    .topbar{background:var(--card);border-bottom:1px solid rgba(0,196,140,0.12);padding:16px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:50;}
+    .brand{display:flex;align-items:center;gap:10px;font-size:1.15rem;font-weight:800;}
+    .brand span{color:var(--green);}
+    .brand-icon{width:34px;height:34px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;}
+    .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .admin-badge{background:rgba(245,196,0,0.1);border:1px solid rgba(245,196,0,0.2);border-radius:20px;padding:5px 14px;font-size:0.78rem;font-weight:700;color:var(--gold);}
+    .btn-sm{padding:7px 16px;border-radius:20px;font-family:'Sora',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+    .btn-danger{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.25);color:var(--red);}
+    .btn-danger:hover{background:rgba(255,92,92,0.2);}
+    .btn-green{background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.2);color:var(--green);}
+    .btn-green:hover{background:rgba(0,196,140,0.18);}
+
+    .content{padding:34px 5%;}
+    .page-heading{margin-bottom:28px;}
+    .page-heading .tag{color:var(--green);font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+    .page-heading h1{font-family:'DM Serif Display',serif;font-size:1.8rem;}
+    .page-heading p{color:var(--muted);font-size:0.86rem;margin-top:5px;}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:28px;}
+    .stat-box{background:var(--card);border:1px solid rgba(0,196,140,0.1);border-radius:var(--radius);padding:20px;}
+    .stat-box .sn{font-size:1.9rem;font-weight:800;color:var(--green);}
+    .stat-box .sl{font-size:0.76rem;color:var(--muted);margin-top:4px;}
+    .stat-box.gold .sn{color:var(--gold);}
+    .stat-box.blue .sn{color:var(--blue);}
+
+    /* CLASS PILLS */
+    .class-pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+    .cpill{background:rgba(0,196,140,0.07);border:1px solid rgba(0,196,140,0.18);border-radius:20px;padding:6px 16px;font-size:0.77rem;}
+    .cpill strong{color:var(--green);}
+    .cpill span{color:var(--muted);}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+    .search-wrap{position:relative;flex:1;min-width:180px;max-width:340px;}
+    .search-wrap input{width:100%;background:var(--card);border:1.5px solid rgba(0,196,140,0.15);border-radius:50px;color:var(--white);font-family:'Sora',sans-serif;font-size:0.84rem;padding:10px 16px 10px 38px;outline:none;transition:border-color 0.2s;}
+    .search-wrap input:focus{border-color:var(--green);}
+    .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:0.88rem;color:var(--muted);}
+    .fsel{background:var(--card);border:1.5px solid rgba(0,196,140,0.15);border-radius:50px;color:var(--white);font-family:'Sora',sans-serif;font-size:0.82rem;padding:10px 14px;outline:none;cursor:pointer;}
+    .fsel option{background:var(--navy);}
+    .ml-auto{margin-left:auto;}
+
+    /* TABLE */
+    .table-wrap{background:var(--card);border:1px solid rgba(0,196,140,0.1);border-radius:18px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:rgba(0,196,140,0.06);}
+    th{padding:13px 16px;text-align:left;font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(0,196,140,0.08);}
+    td{padding:13px 16px;font-size:0.83rem;border-bottom:1px solid rgba(255,255,255,0.03);}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(0,196,140,0.03);}
+    .cls-badge{display:inline-block;background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.2);border-radius:20px;padding:3px 12px;font-size:0.73rem;font-weight:700;color:var(--green);}
+    .id-cell{font-size:0.76rem;color:var(--gold);font-weight:600;font-family:monospace;}
+    .date-cell{font-size:0.74rem;color:var(--muted);}
+    .pw-cell{font-size:0.76rem;color:var(--muted);cursor:pointer;user-select:none;letter-spacing:1px;}
+    .btn-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.95rem;padding:4px 8px;border-radius:6px;transition:background 0.2s;}
+    .btn-del:hover{background:rgba(255,92,92,0.12);}
+
+    /* EMPTY / LOADING */
+    .center-msg{text-align:center;padding:50px 20px;color:var(--muted);font-size:0.88rem;}
+    .center-msg .big{font-size:2.5rem;margin-bottom:12px;}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;}
+    .modal-overlay.show{display:flex;}
+    .modal{background:var(--card);border:1px solid rgba(255,92,92,0.3);border-radius:20px;padding:36px;max-width:360px;width:90%;text-align:center;animation:popIn 0.3s ease both;}
+    .modal h3{font-family:'DM Serif Display',serif;font-size:1.35rem;margin-bottom:10px;}
+    .modal p{color:var(--muted);font-size:0.84rem;margin-bottom:22px;line-height:1.6;}
+    .modal-btns{display:flex;gap:12px;justify-content:center;}
+    .btn-confirm{background:var(--red);color:white;border:none;border-radius:50px;padding:11px 26px;font-family:'Sora',sans-serif;font-weight:700;font-size:0.86rem;cursor:pointer;}
+    .btn-cancel{background:rgba(255,255,255,0.07);color:var(--white);border:none;border-radius:50px;padding:11px 26px;font-family:'Sora',sans-serif;font-weight:600;font-size:0.86rem;cursor:pointer;}
+
+    @media(max-width:680px){th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6){display:none;}}
+  </style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN -->
+<div class="admin-login" id="adminLogin">
+  <div class="login-box">
+    <div class="admin-icon">🛡️</div>
+    <h2>Admin Panel</h2>
+    <p>Restricted to teachers and school administrators only.</p>
+    <div class="err" id="adminErr"></div>
+    <div class="fg">
+      <label>Admin Username</label>
+      <input type="text" id="adminUser" placeholder="admin"/>
+    </div>
+    <div class="fg">
+      <label>Admin Password</label>
+      <input type="password" id="adminPw" placeholder="Enter admin password"/>
+    </div>
+    <button class="btn-al" id="loginBtn" onclick="adminLogin()">
+      <span id="loginBtnTxt">🔑 Access Dashboard</span>
+      <div class="spinner" id="loginSpin"></div>
+    </button>
+    <a href="index.html" class="back-link">← Back to EduReach</a>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <div class="brand"><div class="brand-icon">🛡️</div>Edu<span>Reach</span> Admin</div>
+    <div class="topbar-right">
+      <span class="admin-badge">👤 Administrator</span>
+      <button class="btn-sm btn-green" onclick="loadStudents()">🔄 Refresh</button>
+      <a href="index.html" style="color:var(--muted);font-size:0.78rem;text-decoration:none;">View Site</a>
+      <button class="btn-sm btn-danger" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-heading">
+      <div class="tag">Dashboard</div>
+      <h1>Student Management</h1>
+      <p>All students registered from any device appear here in real time.</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-box"><div class="sn" id="statTotal">—</div><div class="sl">Total Students</div></div>
+      <div class="stat-box gold"><div class="sn" id="statToday">—</div><div class="sl">Registered Today</div></div>
+      <div class="stat-box blue"><div class="sn" id="statClasses">—</div><div class="sl">Classes Active</div></div>
+    </div>
+
+    <!-- CLASS BREAKDOWN -->
+    <div class="class-pills" id="classPills"></div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="si">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search name, ID, class…" oninput="renderTable()"/>
+      </div>
+      <select class="fsel" id="filterClass" onchange="renderTable()">
+        <option value="">All Classes</option>
+        <option>SS1A</option><option>SS1B</option><option>SS1C</option>
+        <option>SS2A</option><option>SS2B</option><option>SS2C</option>
+        <option>SS3A</option><option>SS3B</option><option>SS3C</option>
+      </select>
+      <button class="btn-sm btn-green ml-auto" onclick="exportCSV()">📥 Export CSV</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Full Name</th><th>Student ID</th><th>Class</th>
+            <th>Registered</th><th>Password</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="tableMsg" class="center-msg" style="display:none;">
+        <div class="big">⏳</div>Loading students…
+      </div>
+      <div id="emptyMsg" class="center-msg" style="display:none;">
+        <div class="big">👥</div>No students found.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delModal">
+  <div class="modal">
+    <div style="font-size:2.5rem;margin-bottom:14px;">🗑️</div>
+    <h3>Delete Student?</h3>
+    <p id="delMsg">This student will be removed and must re-register to access the CBT portal.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── ADMIN CREDENTIALS (change these!) ──
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'teacher2025';
+
+let allStudents = [];
+let deleteTargetId = null;
+
+// ── ADMIN LOGIN ──
+async function adminLogin(){
+  const u=document.getElementById('adminUser').value.trim();
+  const p=document.getElementById('adminPw').value;
+  const err=document.getElementById('adminErr');
+  err.style.display='none';
+  if(u!==ADMIN_USER||p!==ADMIN_PASS){
+    err.textContent='⚠️ Incorrect username or password.';
+    err.style.display='block';
+    return;
+  }
+  sessionStorage.setItem('admin_auth','1');
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  await loadStudents();
+}
+
+function adminLogout(){
+  sessionStorage.removeItem('admin_auth');
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('adminLogin').style.display='flex';
+  document.getElementById('adminPw').value='';
+}
+
+// ── LOAD FROM SUPABASE ──
+async function loadStudents(){
+  document.getElementById('tableMsg').style.display='block';
+  document.getElementById('emptyMsg').style.display='none';
+  document.getElementById('tbody').innerHTML='';
+
+  const {data,error}=await window.sb
+    .from('students')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  document.getElementById('tableMsg').style.display='none';
+
+  if(error){
+    document.getElementById('emptyMsg').innerHTML=`<div class="big">⚠️</div>Error loading students: ${error.message}`;
+    document.getElementById('emptyMsg').style.display='block';
+    return;
+  }
+
+  allStudents=data||[];
+  updateStats();
+  renderTable();
+}
+
+// ── STATS ──
+function updateStats(){
+  const today=new Date().toDateString();
+  document.getElementById('statTotal').textContent=allStudents.length;
+  document.getElementById('statToday').textContent=
+    allStudents.filter(s=>new Date(s.created_at).toDateString()===today).length;
+  const cls=[...new Set(allStudents.map(s=>s.class))];
+  document.getElementById('statClasses').textContent=cls.length;
+
+  // Class pills
+  const counts={};
+  allStudents.forEach(s=>{counts[s.class]=(counts[s.class]||0)+1;});
+  document.getElementById('classPills').innerHTML=
+    Object.entries(counts).sort().map(([c,n])=>
+      `<div class="cpill"><strong>${c}</strong> <span>${n} student${n>1?'s':''}</span></div>`
+    ).join('');
+}
+
+// ── RENDER TABLE ──
+function renderTable(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const fc=document.getElementById('filterClass').value;
+  const filtered=allStudents.filter(s=>{
+    const mq=!q||s.full_name.toLowerCase().includes(q)||s.student_id.toLowerCase().includes(q)||(s.class||'').toLowerCase().includes(q);
+    const mc=!fc||s.class===fc;
+    return mq&&mc;
+  });
+
+  const tbody=document.getElementById('tbody');
+  const empty=document.getElementById('emptyMsg');
+
+  if(filtered.length===0){tbody.innerHTML='';empty.style.display='block';empty.innerHTML='<div class="big">🔍</div>No students match your search.';return;}
+  empty.style.display='none';
+
+  tbody.innerHTML=filtered.map((s,i)=>{
+    const d=new Date(s.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const masked='•'.repeat(Math.min(s.password.length,8));
+    return `<tr>
+      <td style="color:var(--muted);font-size:0.74rem;">${i+1}</td>
+      <td><strong>${s.full_name}</strong></td>
+      <td><span class="id-cell">${s.student_id}</span></td>
+      <td><span class="cls-badge">${s.class}</span></td>
+      <td><span class="date-cell">${d}</span></td>
+      <td><span class="pw-cell" onclick="togglePw(this,'${s.password}')" data-m="${masked}" data-p="${s.password}" data-s="0" title="Click to reveal">${masked}</span></td>
+      <td><button class="btn-del" onclick="promptDelete('${s.student_id}','${s.full_name}')">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function togglePw(el,plain){
+  if(el.dataset.s==='0'){el.textContent=plain;el.dataset.s='1';el.style.color='var(--gold)';}
+  else{el.textContent=el.dataset.m;el.dataset.s='0';el.style.color='';}
+}
+
+// ── DELETE ──
+function promptDelete(id,name){
+  deleteTargetId=id;
+  document.getElementById('delMsg').textContent=`Remove "${name}" (${id})? They will need to re-register to access the CBT portal.`;
+  document.getElementById('delModal').classList.add('show');
+}
+function closeModal(){document.getElementById('delModal').classList.remove('show');deleteTargetId=null;}
+async function confirmDelete(){
+  if(!deleteTargetId)return;
+  const {error}=await window.sb.from('students').delete().eq('student_id',deleteTargetId);
+  closeModal();
+  if(error){alert('Delete failed: '+error.message);return;}
+  await loadStudents();
+}
+
+// ── EXPORT CSV ──
+function exportCSV(){
+  if(!allStudents.length){alert('No students to export.');return;}
+  const rows=[['#','Full Name','Student ID','Class','Password','Registered']];
+  allStudents.forEach((s,i)=>rows.push([i+1,s.full_name,s.student_id,s.class,s.password,new Date(s.created_at).toLocaleDateString()]));
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='edureach_students.csv';
+  a.click();
+}
+
+// ── ENTER KEY ──
+document.addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin();});
+
+// ── RESTORE SESSION ──
+window.addEventListener('load',async()=>{
+  if(sessionStorage.getItem('admin_auth')==='1'){
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    await loadStudents();
+  }
+});
+</script>
+</body>
+</html>
